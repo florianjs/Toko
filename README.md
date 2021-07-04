@@ -1,4 +1,4 @@
-![Toko banner](https://toko-demo.netlify.app/img/banner.png)
+![Toko banner](https://i.imgur.com/NFuayuP.png)
 
 **⚠️ Toko is currently in highly development mode, so I DO NOT recommend using it for production mode since it will change over the following weeks.**
 
