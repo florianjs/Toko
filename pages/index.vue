@@ -83,10 +83,16 @@
 
 <script>
 export default {
-  async asyncData({ $directus }) {
+  async asyncData({ $directus, store }) {
     let products = []
     let alt = []
     const items = await $directus.items('items').readMany()
+
+    if (
+      store.state.localStorage.cart &&
+      store.state.localStorage.cart.product_variants !== 'undefined'
+    )
+      store.commit('localStorage/reset')
 
     items.data.forEach((element) => {
       products.push({

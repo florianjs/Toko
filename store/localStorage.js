@@ -48,4 +48,8 @@ export const mutations = {
 
     state.cart.remove(index)
   },
+
+  reset(state) {
+    state.cart = []
+  },
 }
