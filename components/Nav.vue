@@ -2,7 +2,8 @@
   <header class="w-3/4 mx-auto flex justify-between py-8">
     <nuxt-link to="/" style="color: red"
       ><nuxt-img
-        :src="logo"
+        :src="logo.src"
+        :format="logo.format"
         class="
           h-12
           transform
@@ -47,7 +48,10 @@
 export default {
   computed: {
     logo() {
-      return process.env.BASE_URL + '/assets/' + this.$seo.logo
+      return {
+        src: process.env.BASE_URL + '/assets/' + this.$seo.logo,
+        format: this.$seo.logo_format,
+      }
     },
     colorschema() {
       return this.$seo.color

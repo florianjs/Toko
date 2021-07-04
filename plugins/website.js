@@ -11,6 +11,7 @@ export default async function ({ $axios }, inject) {
         og_alt: response.data.data.og_alt,
         url: response.data.data.front_url,
         logo: response.data.data.website_logo,
+        logo_format: response.data.data.logo_format,
         header_image: response.data.data.header_image,
       }
     })
