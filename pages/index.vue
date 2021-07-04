@@ -12,7 +12,7 @@
     </p>
     <div class="col-span-12 gap-6 grid grid-cols-3">
       <nuxt-link
-        :to="`/shop/${item.product_slug}`"
+        :to="`/shop/${item.item_slug}`"
         class="
           group
           col-span-3
@@ -28,11 +28,11 @@
           bg-center
         "
         v-for="item in products"
-        :key="item.product_hero.src"
+        :key="item.item_hero.src"
       >
         <nuxt-img
-          :src="item.product_hero.src"
-          :alt="item.product_hero.alt"
+          :src="item.item_hero.src"
+          :alt="item.item_hero.alt"
           class="
             absolute
             top-0
@@ -73,7 +73,7 @@
           "
         >
           <p class="font-semibold text-white text-4xl">
-            {{ item.product_name }}
+            {{ item.item_name }}
           </p>
         </div>
       </nuxt-link>
@@ -86,26 +86,26 @@ export default {
   async asyncData({ $directus }) {
     let products = []
     let alt = []
-    const items = await $directus.items('shoes').readMany()
+    const items = await $directus.items('items').readMany()
 
     items.data.forEach((element) => {
       products.push({
-        product_name: element.product_name,
-        product_hero: {
-          src: process.env.BASE_URL + '/assets/' + element.product_hero,
+        item_name: element.item_name,
+        item_hero: {
+          src: process.env.BASE_URL + '/assets/' + element.item_hero,
         },
-        product_slug: element.product_slug,
-        product_options: element.product_options,
-        product_image: element.product_hero,
+        item_slug: element.item_slug,
+        item_variants: element.item_variants,
+        item_image: element.item_hero,
       })
     })
 
     await Promise.all(
       products.map(async (element, index) => {
         let img = await $directus.files.readMany({
-          filter: { id: { _eq: element.product_image } },
+          filter: { id: { _eq: element.item_image } },
         })
-        products[index].product_hero['alt'] = img.data[0].description
+        products[index].item_hero['alt'] = img.data[0].description
       })
     )
 

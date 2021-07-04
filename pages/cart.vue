@@ -16,23 +16,23 @@
         :key="index"
       >
         <nuxt-img
-          :src="product.product_hero.src"
+          :src="product.item_hero.src"
           class="col-span-12 lg:col-span-3 h-48 rounded-lg w-full object-cover"
-          :alt="product.product_hero.alt"
+          :alt="product.item_hero.alt"
         />
         <div class="col-span-8 lg:col-span-7 flex flex-col justify-between">
           <div>
             <p class="col-span-4 text-2xl font-bold">
-              {{ product.product_name }}
+              {{ product.item_name }}
             </p>
-            <p class="col-span-4" v-if="product.product_variants.size">
-              Size : {{ product.product_variants.size }} <br />
+            <p class="col-span-4" v-if="product.item_variants.size">
+              Size : {{ product.item_variants.size }} <br />
               Qty :
-              {{ product.product_quantity }}
+              {{ product.item_quantity }}
             </p>
           </div>
           <p class="col-span-4 text-2xl font-bold">
-            {{ product.product_variants.price }}€
+            {{ product.item_variants.price }}€
           </p>
         </div>
 
@@ -235,8 +235,7 @@ export default {
     total() {
       let total = 0
       this.products.forEach((element) => {
-        total +=
-          Number(element.product_variants.price) * element.product_quantity
+        total += Number(element.item_variants.price) * element.item_quantity
       })
 
       return total
@@ -245,8 +244,8 @@ export default {
       let productList = []
       this.products.forEach((element) => {
         productList.push({
-          price: element.product_variants.stripe,
-          quantity: element.product_quantity,
+          price: element.item_variants.stripe,
+          quantity: element.item_quantity,
         })
       })
 

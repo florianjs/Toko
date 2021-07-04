@@ -1,9 +1,9 @@
 <template>
   <div class="px-4 md:w-3/4 mx-auto grid grid-cols-12 gap-6 py-16">
     <nuxt-img
-      :src="`${product.product_hero.src}?height=512&quality=100`"
+      :src="`${product.item_hero.src}?height=512&quality=100`"
       class="col-span-12 md:col-span-8 rounded-lg object-cover h-96 w-full"
-      :alt="product.product_hero.alt"
+      :alt="product.item_hero.alt"
     />
     <p class="text-6xl col-span-4 font-bold">
       Exclusive
@@ -12,7 +12,7 @@
     <ul class="col-span-12 gap-6 grid grid-cols-3">
       <div class="col-span-3 md:col-span-2 grid grid-cols-2 gap-6">
         <div
-          v-for="item in product.product_images"
+          v-for="item in product.item_images"
           @click="showGallery(item)"
           :key="item.src"
           class="w-full h-64 cursor-pointer col-span-2 md:col-span-1 rounded-lg"
@@ -43,7 +43,7 @@
           >
           <div class="grid grid-cols-4 gap-4 mb-6">
             <div
-              v-for="(item, index) in product.product_sizes"
+              v-for="(item, index) in product.item_sizes"
               :key="index"
               class="
                 rounded-lg
@@ -70,21 +70,21 @@
             </div>
           </div>
           <p class="text-6xl font-bold">
-            {{ product.product_sizes[chooseSize].price }}€
+            {{ product.item_sizes[chooseSize].price }}€
           </p>
 
           <button
             v-if="!productQty && !loading"
             class="rounded-lg text-2xl font-bold py-2"
             :class="
-              product.product_sizes[chooseSize].quantity
+              product.item_sizes[chooseSize].quantity
                 ? `bg-${website.color_schema}-500 text-${website.color_schema}-100 hover:bg-${website.color_schema}-600 ease-in-out duration-200 transform`
                 : 'bg-gray-300 text-gray-50 cursor-not-allowed'
             "
-            @click="product.product_sizes[chooseSize].quantity && addToCart()"
+            @click="product.item_sizes[chooseSize].quantity && addToCart()"
           >
             {{
-              product.product_sizes[chooseSize].quantity
+              product.item_sizes[chooseSize].quantity
                 ? 'Add to cart'
                 : 'Out of stock'
             }}
@@ -219,11 +219,11 @@
 <script>
 export default {
   async asyncData({ params, $directus }) {
-    let product = { product_sizes: [], product_images: [] }
+    let product = { item_sizes: [], item_images: [] }
     // fetch current Shoes item
-    let items = await $directus.items('shoes').readMany({
+    let items = await $directus.items('items').readMany({
       filter: {
-        product_slug: {
+        item_slug: {
           _eq: params.id,
         },
       },
@@ -231,7 +231,7 @@ export default {
 
     await Promise.all(
       // Fetch all variants from the current product
-      items.data[0]['product_options'].map(async (element) => {
+      items.data[0]['item_variants'].map(async (element) => {
         // element represent the PK of the variants collection
         let relatedProduct = await $directus.items('variants').readMany({
           filter: {
@@ -243,7 +243,7 @@ export default {
         })
 
         // Push those variants into an Array
-        product['product_sizes'].push({
+        product['item_sizes'].push({
           size: relatedProduct.data[0].size,
           price: relatedProduct.data[0].price,
           quantity: relatedProduct.data[0].quantity,
@@ -254,24 +254,24 @@ export default {
 
     // there is a maximum of 6 images / item
     for (let index = 0; index < 6; index++) {
-      if (items.data[0][`product_image_${index}`]) {
+      if (items.data[0][`item_image_${index}`]) {
         // fetch images from the current item
         let img = await $directus.files.readMany({
-          filter: { id: { _eq: items.data[0][`product_image_${index}`] } },
+          filter: { id: { _eq: items.data[0][`item_image_${index}`] } },
         })
 
         // push image src and alt into the object
-        product['product_images'].push({
+        product['item_images'].push({
           src: process.env.BASE_URL + '/assets/' + img.data[0].id,
           alt: img.data[0].description || '',
         })
       }
     }
 
-    product['product_name'] = items.data[0].product_name
-    product['product_variants'] = items.data[0].product_variants
-    product['product_hero'] = {
-      src: process.env.BASE_URL + '/assets/' + items.data[0].product_hero,
+    product['item_name'] = items.data[0].item_name
+    product['item_variants'] = items.data[0].item_variants
+    product['item_hero'] = {
+      src: process.env.BASE_URL + '/assets/' + items.data[0].item_hero,
       alt: '',
     }
 
@@ -291,13 +291,16 @@ export default {
   computed: {
     productQty() {
       let isInCart = false
-      this.$store.state.localStorage.cart.forEach((element) => {
-        if (
-          element.product_variants.stripe ===
-          this.product.product_sizes[this.chooseSize].stripe
-        )
-          isInCart = element.product_quantity
-      })
+      if (this.$store.state.localStorage.cart) {
+        this.$store.state.localStorage.cart.forEach((element) => {
+          if (
+            element.item_variants.stripe ===
+            this.product.item_sizes[this.chooseSize].stripe
+          )
+            isInCart = element.item_quantity
+        })
+      }
+
       return isInCart
     },
   },
@@ -321,38 +324,38 @@ export default {
       setTimeout(() => {
         this.loading = false
         this.$store.commit('localStorage/add', {
-          product_hero: this.product.product_hero,
-          product_name: this.product.product_name,
-          product_quantity: 1,
-          product_variants: {
-            price: this.product.product_sizes[this.chooseSize].price,
-            size: this.product.product_sizes[this.chooseSize].size,
-            stripe: this.product.product_sizes[this.chooseSize].stripe,
+          item_hero: this.product.item_hero,
+          item_name: this.product.item_name,
+          item_quantity: 1,
+          item_variants: {
+            price: this.product.item_sizes[this.chooseSize].price,
+            size: this.product.item_sizes[this.chooseSize].size,
+            stripe: this.product.item_sizes[this.chooseSize].stripe,
           },
         })
       }, 1000)
     },
     addItem() {
       this.$store.commit('localStorage/addOne', {
-        product_hero: this.product.product_hero,
-        product_name: this.product.product_name,
-        product_quantity: 1,
-        product_variants: {
-          price: this.product.product_sizes[this.chooseSize].price,
-          size: this.product.product_sizes[this.chooseSize].size,
-          stripe: this.product.product_sizes[this.chooseSize].stripe,
+        item_hero: this.product.item_hero,
+        item_name: this.product.item_name,
+        item_quantity: 1,
+        item_variants: {
+          price: this.product.item_sizes[this.chooseSize].price,
+          size: this.product.item_sizes[this.chooseSize].size,
+          stripe: this.product.item_sizes[this.chooseSize].stripe,
         },
       })
     },
     substractItem() {
       this.$store.commit('localStorage/subsctractOne', {
-        product_hero: this.product.product_hero,
-        product_name: this.product.product_name,
-        product_quantity: 1,
-        product_variants: {
-          price: this.product.product_sizes[this.chooseSize].price,
-          size: this.product.product_sizes[this.chooseSize].size,
-          stripe: this.product.product_sizes[this.chooseSize].stripe,
+        item_hero: this.product.item_hero,
+        item_name: this.product.item_name,
+        item_quantity: 1,
+        item_variants: {
+          price: this.product.item_sizes[this.chooseSize].price,
+          size: this.product.item_sizes[this.chooseSize].size,
+          stripe: this.product.item_sizes[this.chooseSize].stripe,
         },
       })
     },

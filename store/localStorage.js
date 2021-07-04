@@ -6,37 +6,37 @@ export const mutations = {
   add(state, item) {
     let alreadyExist = { state: false, index: 0 }
     state.cart.forEach((element, index) => {
-      if (element.product_variants.stripe === item.product_variants.stripe) {
+      if (element.item_variants.stripe === item.item_variants.stripe) {
         alreadyExist.state = true
         alreadyExist.index = index
       }
     })
     alreadyExist.state
-      ? state.cart[alreadyExist.index].product_quantity++
+      ? state.cart[alreadyExist.index].item_quantity++
       : state.cart.push(item)
   },
   addOne(state, item) {
     let alreadyExist = { state: false, index: 0 }
     state.cart.forEach((element, index) => {
-      if (element.product_variants.stripe === item.product_variants.stripe) {
+      if (element.item_variants.stripe === item.item_variants.stripe) {
         alreadyExist.state = true
         alreadyExist.index = index
       }
     })
     alreadyExist.state
-      ? state.cart[alreadyExist.index].product_quantity++
+      ? state.cart[alreadyExist.index].item_quantity++
       : state.cart.push(item)
   },
   subsctractOne(state, item) {
     let alreadyExist = { state: false, index: 0 }
     state.cart.forEach((element, index) => {
-      if (element.product_variants.stripe === item.product_variants.stripe) {
+      if (element.item_variants.stripe === item.item_variants.stripe) {
         alreadyExist.state = true
         alreadyExist.index = index
       }
     })
     alreadyExist.state
-      ? state.cart[alreadyExist.index].product_quantity--
+      ? state.cart[alreadyExist.index].item_quantity--
       : state.cart.push(item)
   },
   remove(state, index) {

@@ -65,9 +65,3 @@ export default {
   },
 }
 </script>
-
-<style scoped>
-.color-svg {
-  fill: red;
-}
-</style>
