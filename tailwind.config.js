@@ -2,7 +2,7 @@ module.exports = {
   purge: {
     options: {
       // Whitelisting some classes to avoid purge
-      safelist: [/^bg-/, /^text-/],
+      safelist: [/^bg-/, /^text-/, /^hover:bg-/],
     },
   },
   theme: {
